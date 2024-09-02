@@ -23,26 +23,27 @@ app.get ('/categories', async (req, res)=> {
 })
 
 app.get ('/recordings', async (req, res)=> {
-  const result = await sql `select * from recordsall`
+  const result = await sql `select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color, allcategories.id  from allcategories left join  allsrecord on allsrecord.categoryid = allcategories.id `
   res.json (result)
+  console.log (result)
 })
 
  app.post('/recordings', async (req, res) => {
   const id = uuidv4()
   const {alltype, amount, category, date, time, payee, note} =req.body
-  const result =  await sql`insert into recordsall (id, typesall, amount, category, date, time, payee, note) values (${id}, ${alltype},${amount}, ${category}, ${date}, ${time}, ${payee},${note})`
+  const result =  await sql`insert into allsrecord (id, categoryid, alltransactiontypes, amount, date, time, payee, note) values (${id}, ${category},${alltype}, ${amount}, ${date}, ${time}, ${payee},${note})`
   res.sendStatus(204)
 })
 
-app.get ('/dashboard', async (req, res)=> {
-  const {nowHour} = req.query
+// app.get ('/dashboard', async (req, res)=> {
+//   const {nowHour} = req.query
   
-  const result = await sql `select * from recordsall ORDER BY date DESC, time DESC `
-  res.json (result)
-})
+//   const result = await sql `select * from allsrecord ORDER BY date DESC, time DESC `
+//   res.json (result)
+// })
 
 app.get ('/income', async (req, res)=> {
-  const result = await sql `select SUM (amount) from recordsall GROUP BY typesall`
+  const result = await sql `select SUM (amount) from allsrecord GROUP BY typesall`
   res.json (result)
 })
 
