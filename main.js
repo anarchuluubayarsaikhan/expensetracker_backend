@@ -23,9 +23,9 @@ app.get ('/categories', async (req, res)=> {
 })
 
 app.get ('/recordings', async (req, res)=> {
-  const result = await sql `select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color, allcategories.id  from allcategories left join  allsrecord on allsrecord.categoryid = allcategories.id `
+  const result = await sql `select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from allcategories left join  allsrecord on allsrecord.categoryid = allcategories.id `
   res.json (result)
-  console.log (result)
+
 })
 
  app.post('/recordings', async (req, res) => {
@@ -35,12 +35,19 @@ app.get ('/recordings', async (req, res)=> {
   res.sendStatus(204)
 })
 
-// app.get ('/dashboard', async (req, res)=> {
-//   const {nowHour} = req.query
-  
-//   const result = await sql `select * from allsrecord ORDER BY date DESC, time DESC `
-//   res.json (result)
-// })
+app.delete('/recordings/:id', async (req, res) => {
+  const {id} =req.params
+  console.log (req.params)
+  const result =  await sql`delete from allsrecord where id = ${id} `
+  res.sendStatus(204)
+})
+
+app.put ('/categories/:id', async (req, res) => {
+  const {id} =req.params
+  const {name} =req.body
+  const result =  await sql`update  allcategories set name = ${name} where id = ${id} `
+  res.sendStatus(204)
+})
 
 app.get ('/income', async (req, res)=> {
   const result = await sql `select SUM (amount) from allsrecord GROUP BY typesall`
