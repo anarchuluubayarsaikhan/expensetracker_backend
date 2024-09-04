@@ -23,7 +23,7 @@ app.get ('/categories', async (req, res)=> {
 })
 
 app.get ('/recordings', async (req, res)=> {
-  const result = await sql `select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from allcategories left join  allsrecord on allsrecord.categoryid = allcategories.id `
+  const result = await sql `select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from  allsrecord left join  allcategories  on allsrecord.categoryid = allcategories.id order by allsrecord.date desc `
   res.json (result)
 
 })
