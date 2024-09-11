@@ -28,12 +28,17 @@ app.get('/recordings', async (req, res) => {
 
 })
 
-app.get('/types/:typename/:categoryname', async (req, res) => {
-  const typename = req.params.typename
-  const categoryname = req.params.categoryname
-  let result = sql`select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from  allsrecord left join  allcategories  on allsrecord.categoryid = allcategories.id where 1=1 `
+app.get('/search/:search', async (req, res) => {
+  const {search} = req.params
+  const result = await sql`select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from  allsrecord left join  allcategories  on allsrecord.categoryid = allcategories.id where allcategories.name = ${search}`
+  res.json(result)
 
-  // console.log("result", result);
+})
+
+app.get('/types', async (req, res) => {
+  const {typename, categoryname} =req.query
+  let result = sql`select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from  allsrecord left join  allcategories  on allsrecord.categoryid = allcategories.id where 1=1 `
+  console.log (result)
 
   if (typename) {
     result = sql`${result} and allsrecord.alltransactiontypes=${typename}`
@@ -42,10 +47,7 @@ app.get('/types/:typename/:categoryname', async (req, res) => {
   if (categoryname) {
     result = sql`${result} and allsrecord.categoryid=${categoryname}`
   }
-
-  console.log(result.raw)
   const list = await result; 
-  console.log(list)
   res.json(list)
 })
 
@@ -64,7 +66,6 @@ app.post('/recordings', async (req, res) => {
 
 app.delete('/recordings/:id', async (req, res) => {
   const { id } = req.params
-  console.log(req.params)
   const result = await sql`delete from allsrecord where id = ${id} `
   res.sendStatus(204)
 })
@@ -72,7 +73,6 @@ app.delete('/recordings/:id', async (req, res) => {
 app.put('/recordings/:id', async (req, res) => {
   const idedited = req.params.id
   const { alltype, category, amount, date, time, payee, note } = req.body
-  console.log(idedited, alltype, category, amount, date, time, payee, note)
   const result = await sql`update  allsrecord set alltransactiontypes=${alltype},amount=${amount}, date=${date}, time=${time}, payee=${payee}, note=${note}, categoryid=${category} where id = ${idedited} `
   res.sendStatus(204)
 })
