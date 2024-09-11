@@ -30,13 +30,16 @@ app.get('/recordings', async (req, res) => {
 
 app.get('/search/:search', async (req, res) => {
   const {search} = req.params
-  const result = await sql`select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from  allsrecord left join  allcategories  on allsrecord.categoryid = allcategories.id where allcategories.name = ${search}`
+  console.log (req.params)
+  const result = await sql`select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from  allsrecord left join  allcategories  on allsrecord.categoryid = allcategories.id where allcategories.name like '% ${search} %'`
   res.json(result)
+  console.log (result)
 
 })
 
 app.get('/types', async (req, res) => {
-  const {typename, categoryname} =req.query
+  const {typename, categoryname,daterange} =req.query
+  console.log (req.query)
   let result = sql`select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from  allsrecord left join  allcategories  on allsrecord.categoryid = allcategories.id where 1=1 `
   console.log (result)
 
@@ -47,9 +50,18 @@ app.get('/types', async (req, res) => {
   if (categoryname) {
     result = sql`${result} and allsrecord.categoryid=${categoryname}`
   }
+
+  if (daterange) {
+    result = sql`${result} and allsrecord.date>${daterange}`
+    console.log (daterange)
+  }
   const list = await result; 
   res.json(list)
-})
+
+}
+
+)
+
 
 // app.get ('/types/:typename', async (req, res)=> {
 //   const typename = req.params.typename
