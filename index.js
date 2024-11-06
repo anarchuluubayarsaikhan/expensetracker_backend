@@ -28,15 +28,6 @@ app.get('/recordings', async (req, res) => {
 
 })
 
-app.get('/search/:search', async (req, res) => {
-  const { search } = req.params
-  console.log(req.params)
-  const result = await sql`select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from  allsrecord left join  allcategories  on allsrecord.categoryid = allcategories.id where allcategories.name like '% ${search} %'`
-  res.json(result)
-  console.log(result)
-
-})
-
 app.get('/types', async (req, res) => {
   const { typename, categoryname ,daterange} = req.query
   console.log(req.query)
@@ -61,12 +52,6 @@ app.get('/types', async (req, res) => {
 
 )
 
-// app.get ('/types/:typename', async (req, res)=> {
-//   const typename = req.params.typename
-//   const result = await sql `select allsrecord.id, allsrecord.alltransactiontypes, allsrecord.amount, allsrecord.date, allsrecord.time, allsrecord.payee, allsrecord.note, allcategories.name, allcategories.icon, allcategories.color  from  allsrecord left join  allcategories  on allsrecord.categoryid = allcategories.id where  allsrecord.alltransactiontypes = ${typename} `
-//   res.json (result)
-// })
-
 app.post('/recordings', async (req, res) => {
   const id = uuidv4()
   const { alltype, amount, category, date, time, payee, note } = req.body
@@ -86,11 +71,6 @@ app.put('/recordings/:id', async (req, res) => {
   const result = await sql`update  allsrecord set alltransactiontypes=${alltype},amount=${amount}, date=${date}, time=${time}, payee=${payee}, note=${note}, categoryid=${category} where id = ${idedited} `
   res.sendStatus(204)
 })
-
-// app.get ('/income', async (req, res)=> {
-//   const result = await sql `select SUM (amount) from allsrecord GROUP BY typesall`
-//   res.json (result)
-// })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
